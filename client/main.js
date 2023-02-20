@@ -63,13 +63,9 @@ search_friend.addEventListener("change", (e) => {
     loadFriendListWithSearch(friends, friend_list, search_friend.value);
 });
 
-function getAllUsers () {
-    fetch("http://localhost:5050/friends/allUsers")
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(err => console.log(err));
-}
+async function getAllUsers () {
+    const response = await fetch("http://localhost:5050/friends/allUsers");
+    const data = await response.json();
 
-getAllUsers();
+    return data;
+}
