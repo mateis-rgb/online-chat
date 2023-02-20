@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<view name="Home"/>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/png" href="/chat-web.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title id="title">Client - Chat</title>
+		<link rel="stylesheet" href="/style.css">
+	</head>
+	<body>
+		<div id="app">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<div class="container-fluid">
+					<a class="navbar-brand ml-4" href="#">chat.io</a>
+					<button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+						<i class="fas fa-bars"></i>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarText">
+						<ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+						<div class="d-flex align-items-center">
+							<!-- Si utilisateur pas connecté -->
+							<button type="button" class="btn btn-link px-3 me-2">
+							  	S'identifier
+							</button>
+							<button type="button" class="btn btn-link me-3">
+							  	S'enregistrer
+							</button>
+
+							<!-- Sinon -->
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+								  	{{ Auth()->user->name }}
+								</a>
+								<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+									<li>
+										<a class="dropdown-item" href="#">Profile</a>
+									</li>
+									<li>
+										<a class="dropdown-item" href="#">Demandes d'amis</a>
+									</li>
+									<li>
+										<a class="dropdown-item" href="#">Paramètres</a>
+									</li>
+									<li>
+										<a class="dropdown-item" href="#">Se déconnecter</a>
+									</li>
+								</ul>
+							</li>
+						</div>
+					</div>
+				</div>
+			</nav>
+
+			<div class="container">
+				<div class="d-flex align-items-center justify-content-center">
+					<div class="col-md-6 m-4">
+						<div class="users card">
+							<div class="card-body">
+								<h2 class="card-title">Amis</h2>
+								<hr>
+								<div class="card-text">
+									<!-- foreach {{ friend }} in {{ friends }} -->
+									<div class="list-group list-group-light" id="friends-list">
+										<div class="list-group-item list-group-item-action px-3 border-0 d-flex align-items-center">
+											<div class="p-2 flex-grow-1">
+												toto
+											</div>
+											<div class="p-2">
+												<button class="btn btn-success">
+													<i class="fa-solid fa-add"></i>
+												</button>
+												<button class="btn btn-danger">
+													<i class="fa-regular fa-circle-xmark"></i>
+												</button>
+											</div>
+										</div>
+										<div class="list-group-item list-group-item-action px-3 border-0 d-flex align-items-center">
+											<div class="p-2 flex-grow-1">
+												toto
+											</div>
+											<div class="p-2">
+												<button class="btn btn-primary">
+													<i class="fa-regular fa-message"></i>
+												</button>
+											</div>
+										</div>
+
+
+
+									</div>
+								</div>
+								<hr>
+								<form>
+									<div class="search input-group">
+										<div class="form-outline">
+											<input type="text" id="search-friend" class="form-control">
+											<label for="search-friend" class="form-label">Rechercher un ami</label>
+										</div>
+										<button class="btn btn-primary">
+											<i class="fa-solid fa-magnifying-glass"></i>
+										</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-6 m-4">
+						<div class="users card">
+							<div class="card-body">
+								<h2 class="card-title text-end">{{ user->name }}</h2>
+								<hr>
+								<div class="card-text">
+									<div class="from text-end">
+										<strong>Moi</strong> <br>
+										Coucou
+									</div>
+									<div class="to">
+										<strong>{{ user->name }}</strong> <br>
+										Salut
+									</div>
+									<div class="from text-end">
+										<strong>Moi</strong> <br>
+										Ça va ?
+									</div>
+									<div class="to">
+										<strong>{{ user->name }}</strong> <br>
+										bien et toi
+									</div>
+
+								</div>
+								<hr>
+								<form>
+									<div class="send-message input-group">
+										<div class="form-outline">
+											<input type="text" name="send-message" id="send-message" class="form-control">
+											<label for="send-message" class="form-label">Envoyer un message à {{ user->name }}</label>
+										</div>
+										<button class="btn btn-primary">
+											<i class="fa-solid fa-paper-plane-top"></i>
+										</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+
+
+					
+						<!-- <div class="users">
+							<div class="search">
+								<form>
+									<input type="text">
+									<button type="submit">Chercher</button>
+								</form>
+							</div>
+							<div class="users-list"></div>
+						</div>
+						<div class="conversation">
+							<div class="messages"></div>
+							<form>
+									<textarea></textarea>
+									<button type="submit">Envoyer</button>
+							</form>
+						</div>
+						</div>
+					</div> -->
+		
+
+				</div>
+			</div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.js"></script>
+		<script type="module" src="/main.js"></script>
+	</body>
+</html>
