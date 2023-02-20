@@ -1,0 +1,14 @@
+[
+    {
+        "id": 0,
+        "userId": 2,
+        "isFriendWith": 3,
+        "status": "friend"
+    },
+    {
+        "id": 1,
+        "userId": 3,
+        "isFriendWith": 2,
+        "status": "friend"
+    }
+]
