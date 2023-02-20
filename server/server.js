@@ -1,8 +1,12 @@
 const express = require("express");
 const crypto = require("node:crypto");
+const cors = require("cors");
 const fs = require("fs");
 
 const app = express();
+
+app.use(cors());
+app.use(express.json());
 
 // DEV ROUTES
 app.get("/db/seed/UserTableSeeder", (req, res) => {
@@ -24,10 +28,11 @@ app.get("/db/seed/UserTableSeeder", (req, res) => {
         if (err) {
             res.status(500).send(err);
         }
-        res.status(200).send({
-            "userWrite": "success"
-        })
     });
+
+    res.status(200).send({
+        userWrite: "success"
+    })
 });
 
 
@@ -36,19 +41,49 @@ app.get("/db/seed/UserTableSeeder", (req, res) => {
 
 // ROUTES
 app.get("/", (req, res) => {
-    res.status(200);
+    res.status(200).send({
+        application: "ok"
+    });
 });
 
 
-app.get("/friends/")
+app.get("/friends/allUsers", (req, res) => {
+    const users = getAllUsers();
+
+    if (users == null) {
+        res.status(500).send({
+            usersRequest: "failed",
+            users: users
+        });
+        return;
+    }
+
+    res.status(200).send({
+        usersRequest: "success",
+        users: users
+    });
+});
 
 app.listen(5050, () => {
     console.log("Chat application is listening at http://localhost:5050");
 });
 
-// function getAllUsers () {
+function getAllUsers () {
+    let users = fs.readFileSync("./users.json", "utf8", (err) => {
+        if (err) {
+            return null;
+        }
+    });
 
-// }
+    if (users.length == 0) {
+        users = null;
+    }
+    else {
+        users = JSON.parse(users);
+    }
+
+    return users;
+}
 // function getFriends () {}
 // function addFriend () {}
 // function delFriend () {}
