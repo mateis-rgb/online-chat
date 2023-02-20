@@ -1,0 +1,3 @@
+*/node_modules/*
+client/node_modules/fsevents/fsevents.d.ts
+.DS_Store
