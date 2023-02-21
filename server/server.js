@@ -77,6 +77,12 @@ app.get("/friends/:uid", (req, res) => {
     });
 });
 
+app.get("/friends/:uid/add/:friendUID", (req, res) => {
+    const add = addFriend(parseInt(req.params.uid), parseInt(req.params.friendUID));
+
+    res.status(add.status).send(add);
+});
+
 
 app.listen(5050, () => {
     console.log("Chat application is listening at http://localhost:5050");
@@ -139,7 +145,55 @@ function getFriendListOfUser (userId) {
 }
 
 function addFriend (userId, friendId) {
-    
+    var friendList = getAllFriends();
+    var usersList = getAllUsers();
+    var err = false;
+
+    friendList.forEach((friend) => {
+        if ((friend.isFriendWith == friendId && friend.userId == userId) || (friend.isFriendWith == userId && friend.userId == friendId)) {
+            err = true;   
+        }
+    });
+    if (err) return {
+        status: 500,
+        message: 'Friend already added'
+    }
+
+    usersList.forEach((user) => {
+        if (user.id != userId || user.id != friendId) {
+            err = true;
+        }
+    });
+    if (err) return {
+        status: 500,
+        message: "Users didn't exist"
+    }
+
+    friendList.push({
+        id: friendList.length + 1,
+        userId: userId,
+        isFriendWith: friendId,
+    });
+
+    friendList.push({
+        id: friendList.length + 1,
+        userId: friendId,
+        isFriendWith: userId
+    });
+
+    fs.writeFile("friends.json", JSON.stringify(friendList, "", "\t"), (err) => {
+        if (err) {
+            return {
+                status: 500,
+                message: err
+            };
+        }
+    });
+
+    return {
+        status: 200,
+        message: "Friend added successfully"
+    }
 }
 // function delFriend (userId, friendId) {}
 
