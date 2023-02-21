@@ -2,11 +2,12 @@ const express = require("express");
 const crypto = require("node:crypto");
 const cors = require("cors");
 const fs = require("fs");
+const bodyParser = require("body-parser");
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
 // DEV ROUTES
 app.get("/db/seed/UserTableSeeder", (req, res) => {
@@ -87,6 +88,13 @@ app.get("/friends/:uid/remove/:friendUID", (req, res) => {
 	const remove = delFriend(parseInt(req.params.uid), parseInt(req.params.friendUID));
 
 	res.status(remove.status).send(remove);
+});
+
+
+app.post("/auth/register", (req, res) => {
+    const reg = register(req.body.name, req.body.email, req.body.password);
+
+    res.status(reg.status).send(reg);
 });
 
 
@@ -290,4 +298,15 @@ function delFriend(userId, friendId) {
 
 // function login () {}
 // function logout () {}
-// function register () {}
+function register (name, email, password) {
+    var users = getAllUsers();
+
+    // Verifier si il existe un utilisateur qui porte le meme email
+    const emailExist = users.some((user) => user.email === email);
+    if (emailExist) {
+        return {
+            status: 500,
+            message: 'Email already exists'
+        }
+    }
+}

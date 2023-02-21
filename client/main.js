@@ -48,8 +48,6 @@ function loadFriendListWithSearch (friendList, friendListElement, searchText) {
                 </div>`;
             }
 
-
-
             friendListElement.appendChild(elm);
         }
     });
@@ -71,8 +69,29 @@ async function getAllUsers () {
 }
 
 async function getFriendListOfUser (userId) {
-    const response = await fetch("http://localhost:5050/friends/2");
+    const response = await fetch(`http://localhost:5050/friends/${userId}`);
     const data = await response.json();
 
     return data;
 }
+
+
+
+async function register (name, email, password) {
+    const response = await fetch(`http://localhost:5050/auth/register`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password
+        })
+    });
+    const data = await response.json();
+
+    return data;
+}
+
+console.log(register("toto", "toto@mail.com", "0000"));
