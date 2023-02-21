@@ -36,16 +36,12 @@ app.get("/db/seed/UserTableSeeder", (req, res) => {
 });
 
 
-
-
-
 // ROUTES
 app.get("/", (req, res) => {
     res.status(200).send({
         application: "ok"
     });
 });
-
 
 app.get("/friends/allUsers", (req, res) => {
     const users = getAllUsers();
@@ -64,9 +60,28 @@ app.get("/friends/allUsers", (req, res) => {
     });
 });
 
+app.get("/friends/:uid", (req, res) => {
+    const friends = getFriendListOfUser(req.params.uid);
+
+    if (friends == null) {
+        res.status(500).send({
+            friendsRequest: "failed",
+            friends: friends
+        });
+        return;
+    }
+
+    res.status(200).send({
+        friendsRequest: "success",
+        friends: friends
+    });
+});
+
+
 app.listen(5050, () => {
     console.log("Chat application is listening at http://localhost:5050");
 });
+
 
 function getAllUsers () {
     let users = fs.readFileSync("./users.json", "utf8", (err) => {
@@ -84,9 +99,61 @@ function getAllUsers () {
 
     return users;
 }
-// function getFriends () {}
-// function addFriend () {}
-// function delFriend () {}
+
+function getAllFriends () {
+    let friends = fs.readFileSync("./friends.json", "utf8", (err) => {
+        if (err) {
+            return null;
+        }
+    });
+
+    if (friends.length == 0) {
+        friends = null;
+    }
+    else {
+        friends = JSON.parse(friends);
+    }
+
+    return friends;
+}
+
+function getFriendListOfUser (userId) {
+    const users = getAllUsers();
+    const friends = getAllFriends();
+
+    var friendList = Array();
+
+    friends.forEach((user) => {
+        if (user.userId == userId) {
+            console.log(users[user.userId])
+        
+            friendList.push({
+                id: user.id,
+                user: users[userId],
+                friend: users[user.isFriendWith]
+            });
+        }
+    });
+
+    return friendList;
+}
+
+function addFriend (userId, friendId) {
+    
+}
+// function delFriend (userId, friendId) {}
+
+
+
+
+
+
+
+
+
+
+
+
 
 // function parseUsersToFriendFormat (userList, friendList) {}
 

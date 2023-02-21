@@ -2,13 +2,11 @@
     {
         "id": 0,
         "userId": 2,
-        "isFriendWith": 3,
-        "status": "friend"
+        "isFriendWith": 3
     },
     {
         "id": 1,
         "userId": 3,
-        "isFriendWith": 2,
-        "status": "friend"
+        "isFriendWith": 2
     }
 ]

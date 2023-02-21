@@ -69,3 +69,10 @@ async function getAllUsers () {
 
     return data;
 }
+
+async function getFriendListOfUser (userId) {
+    const response = await fetch("http://localhost:5050/friends/2");
+    const data = await response.json();
+
+    return data;
+}
