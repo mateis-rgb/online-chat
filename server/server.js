@@ -83,6 +83,12 @@ app.get("/friends/:uid/add/:friendUID", (req, res) => {
     res.status(add.status).send(add);
 });
 
+app.get("/friends/:uid/remove/:friendUID", (req, res) => {
+	const remove = delFriend(parseInt(req.params.uid), parseInt(req.params.friendUID));
+
+	res.status(remove.status).send(remove);
+});
+
 
 app.listen(5050, () => {
     console.log("Chat application is listening at http://localhost:5050");
@@ -144,72 +150,139 @@ function getFriendListOfUser (userId) {
     return friendList;
 }
 
-function addFriend (userId, friendId) {
-    var friendList = getAllFriends();
-    var usersList = getAllUsers();
-    var err = false;
+/**
+ * Ajoute un ami à la liste des amis.
+ * @param {number} userId - L'ID de l'utilisateur qui veut ajouter l'ami.
+ * @param {number} friendId - L'ID de l'ami à ajouter.
+ * @returns {Object} - Un objet contenant un statut et un message.
+ *                    - Si l'ami a été ajouté avec succès, le statut est 200 et le message est "Friend added successfully".
+ *                    - Si l'ami est déjà ajouté, le statut est 500 et le message est "Friend already added".
+ *                    - Si userId ou friendId ne correspondent pas à des utilisateurs référencés, le statut est 500 et le message est "Users don't exist".
+ *                    - Si userId er friendId sont identiques, le statut est 500 et le message est "Both route parameter identifiers are the same".
+ */
+function addFriend(userId, friendId) {
+    // Récupérer la liste des amis et des utilisateurs
+    const friendList = getAllFriends();
+    const usersList = getAllUsers();
 
-    friendList.forEach((friend) => {
-        if ((friend.isFriendWith == friendId && friend.userId == userId) || (friend.isFriendWith == userId && friend.userId == friendId)) {
-            err = true;   
-        }
-    });
-    if (err) return {
-        status: 500,
-        message: 'Friend already added'
+	// Vérifier si userId est égale à friendId
+	if (userId === friendId) {
+		return {
+			status: 500,
+			message: "Both route parameter identifiers are the same"
+		}
+	}
+  
+    // Vérifier si l'ami est déjà ajouté
+    const alreadyAdded = friendList.find(
+        (friend) =>
+            (friend.userId === userId && friend.isFriendWith === friendId) ||
+            (friend.userId === friendId && friend.isFriendWith === userId)
+    );
+    if (alreadyAdded) {
+        return {
+            status: 500,
+            message: 'Friend already added',
+        };
     }
-
-    usersList.forEach((user) => {
-        if (user.id != userId || user.id != friendId) {
-            err = true;
-        }
-    });
-    if (err) return {
-        status: 500,
-        message: "Users didn't exist"
+  
+    // Vérifier si userId et friendId correspondent à des utilisateurs référencés
+    const userExists = usersList.some((user) => user.id === userId);
+    const friendExists = usersList.some((user) => user.id === friendId);
+    if (!userExists || !friendExists) {
+        return {
+            status: 500,
+            message: "Users don't exist",
+        };
     }
-
+  
+    // Ajouter l'ami à la liste des amis
     friendList.push({
         id: friendList.length + 1,
         userId: userId,
         isFriendWith: friendId,
     });
-
+  
     friendList.push({
         id: friendList.length + 1,
         userId: friendId,
-        isFriendWith: userId
+        isFriendWith: userId,
     });
-
-    fs.writeFile("friends.json", JSON.stringify(friendList, "", "\t"), (err) => {
+  
+    // Écrire les données mises à jour dans le fichier friends.json
+    fs.writeFile('friends.json', JSON.stringify(friendList, '', '\t'), (err) => {
         if (err) {
             return {
                 status: 500,
-                message: err
+                message: err,
             };
-        }
+      }
     });
-
+  
+    // Retourner un objet contenant le statut et le message appropriés
     return {
         status: 200,
-        message: "Friend added successfully"
-    }
+        message: 'Friend added successfully',
+    };
 }
-// function delFriend (userId, friendId) {}
 
-
-
-
-
-
-
-
-
-
-
-
-
-// function parseUsersToFriendFormat (userList, friendList) {}
+/**
+ * Supprime la relation d'amitié correspondant à userId et friendId du fichier friends.json
+ * @param {number} userId - L'ID de l'utilisateur qui souhaite supprimer la relation d'amitié
+ * @param {number} friendId - L'ID de l'ami à supprimer de la liste d'amis de l'utilisateur
+ * @returns {object} - Un objet contenant le statut de la suppression (200 ou 500) et un message associé
+ */
+function delFriend(userId, friendId) {
+	const friendList = getAllFriends();
+  
+	// Trouve l'index de la relation d'amitié correspondant à userId et friendId
+	const index = friendList.findIndex(
+		(friend) =>
+			(friend.userId === userId && friend.isFriendWith === friendId) ||
+			(friend.userId === friendId && friend.isFriendWith === userId)
+	);
+  
+	if (index === -1) {
+		return {
+			status: 500,
+			message: 'Friend relationship not found',
+		};
+	}
+  
+	// Supprime la relation d'amitié correspondant à userId et friendId
+	friendList.splice(index, 1);
+  
+	// Trouve l'index de la relation d'amitié correspondant à friendId et userId
+	const index2 = friendList.findIndex(
+		(friend) =>
+			(friend.userId === friendId && friend.isFriendWith === userId) ||
+			(friend.userId === userId && friend.isFriendWith === friendId)
+	);
+  
+	if (index2 === -1) {
+		return {
+			status: 500,
+			message: 'Friend relationship not found',
+		};
+	}
+  
+	// Supprime la relation d'amitié correspondant à friendId et userId
+	friendList.splice(index2, 1);
+  
+	fs.writeFile('friends.json', JSON.stringify(friendList, '', '\t'), (err) => {
+		if (err) {
+			return {
+				status: 500,
+				message: err,
+			};
+		}
+	});
+  
+	return {
+		status: 200,
+		message: 'Friend relationship deleted successfully',
+	};
+}
 
 // function getMessages () {}
 // function addMessage () {}
