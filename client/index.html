@@ -20,10 +20,10 @@
 						<ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
 						<div class="d-flex align-items-center">
 							<!-- Si utilisateur pas connecté -->
-							<button type="button" class="btn btn-link px-3 me-2">
+							<button type="button" class="btn btn-link px-3 me-2" data-mdb-toggle="modal" data-mdb-target="#loginModal">
 							  	S'identifier
 							</button>
-							<button type="button" class="btn btn-link me-3">
+							<button type="button" class="btn btn-link me-3" data-mdb-toggle="modal" data-mdb-target="#registerModal">
 							  	S'enregistrer
 							</button>
 
@@ -52,7 +52,12 @@
 				</div>
 			</nav>
 
+			
 			<div class="container">
+				<div id="alerts" class="mt-4" hidden>
+					<div class="alert alert-danger"></div>
+				</div>
+		
 				<div class="d-flex align-items-center justify-content-center">
 					<div class="col-md-4 m-4">
 						<div class="users card">
@@ -85,9 +90,6 @@
 												</button>
 											</div>
 										</div>
-
-
-
 									</div>
 								</div>
 								<hr>
@@ -147,27 +149,64 @@
 					</div>
 
 
-					
-						<!-- <div class="users">
-							<div class="search">
-								<form>
-									<input type="text">
-									<button type="submit">Chercher</button>
+					<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModal" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<form id="loginForm" method="post">
+									<div class="modal-header">
+										<h5 class="modal-title" id="loginModal">S'identifier</h5>
+										<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<div class="form-outline mt-2">
+											<input type="email" name="loginEmail" id="loginEmail" class="form-control">
+											<label for="loginEmail" class="form-label">Entrez votre email</label>
+										</div>
+										<div class="form-outline mt-2">
+											<input type="password" name="loginPassword" id="loginPassword" class="form-control">
+											<label for="loginPassword" class="form-label">Entrez votre mot de passe</label>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fermer</button>
+										<button type="submit" class="btn btn-primary" data-mdb-dismiss="modal">S'identifier</button>
+									</div>
 								</form>
 							</div>
-							<div class="users-list"></div>
 						</div>
-						<div class="conversation">
-							<div class="messages"></div>
-							<form>
-									<textarea></textarea>
-									<button type="submit">Envoyer</button>
-							</form>
-						</div>
-						</div>
-					</div> -->
-		
+					</div>
 
+					<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModal" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="registerModal">S'enregistrer</h5>
+									<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="form-outline mt-2">
+										<input type="text" id="registerUsername" name="registerUsername" class="form-control">
+										<label for="registerUsername" class="form-label">Entrez votre nom d'utilisateur</label>
+									</div>
+									<div class="form-outline mt-2">
+										<input type="email" id="registerEmail" name="registerEmail" class="form-control">
+										<label for="registerEmail" class="form-label">Entrez votre email</label>
+									</div>
+									<div class="form-outline mt-2">
+										<input type="password" id="registerPassword" name="registerPassword" class="form-control">
+										<label for="registerPassword" class="form-label">Entrez votre mot de passe</label>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fermer</button>
+									<button type="button" class="btn btn-primary" data-mdb-dismiss="modal">S'enregistrer</button>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+
+					
 				</div>
 			</div>
 

@@ -68,5 +68,12 @@
 		"email": "john9@doe.fr",
 		"password": "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0",
 		"created_at": "Mon, 20 Feb 2023 21:17:27 GMT"
+	},
+	{
+		"id": 11,
+		"name": "toto",
+		"email": "toto@mail.com",
+		"password": "$2b$10$E6kIOjHTSNfbuM.cZ7TJZOfT1dXVbdJkAZqcVaXEzwMsuMCvzgGne",
+		"created_at": "Tue, 21 Feb 2023 21:39:21 GMT"
 	}
 ]

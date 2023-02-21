@@ -1,3 +1,10 @@
+const alert = document.querySelector("#alerts");
+
+function sleep (ms) {
+    new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
 const friend_list = document.querySelector('#friends-list');
 const search_friend = document.querySelector("#search-friend");
 
@@ -61,6 +68,26 @@ search_friend.addEventListener("change", (e) => {
     loadFriendListWithSearch(friends, friend_list, search_friend.value);
 });
 
+
+const loginForm = document.querySelector("#loginForm");
+const loginEmail = document.querySelector("#loginEmail");
+const loginPassword = document.querySelector("#loginPassword");
+
+const registerForm = document.querySelector("#registerForm");
+const registerUsername = document.querySelector("#registerUsername");
+const registerEmail = document.querySelector("#registerEmail");
+const registerPassword = document.querySelector("#registerPassword");
+
+
+loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    login (loginEmail.value, loginPassword.value);
+});
+
+
+
+
 async function getAllUsers () {
     const response = await fetch("http://localhost:5050/friends/allUsers");
     const data = await response.json();
@@ -74,8 +101,6 @@ async function getFriendListOfUser (userId) {
 
     return data;
 }
-
-
 
 async function register (name, email, password) {
     const response = await fetch(`http://localhost:5050/auth/register`, {
@@ -94,4 +119,30 @@ async function register (name, email, password) {
     return data;
 }
 
-console.log(register("toto", "toto@mail.com", "0000"));
+async function login (email, password) {
+    const response = await fetch(`http://localhost:5050/auth/login`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            email: email,
+            password: password
+        })
+    });
+    const data = await response.json();
+
+    console.log(data);
+
+    if (data.status == "200") {
+        alerts.firstElementChild.classList.add("alert-success");
+        alerts.firstElementChild.textContent = data.message;
+    }
+    else {
+        alerts.firstElementChild.classList.add("alert-danger");
+        alerts.firstElementChild.textContent = data.message;
+    }
+    alerts.hidden = false;
+    await sleep(5000);
+    alerts.hidden = true;
+}

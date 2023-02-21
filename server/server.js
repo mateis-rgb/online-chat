@@ -3,6 +3,7 @@ const crypto = require("node:crypto");
 const cors = require("cors");
 const fs = require("fs");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -97,10 +98,41 @@ app.post("/auth/register", (req, res) => {
     res.status(reg.status).send(reg);
 });
 
+app.post("/auth/login", (req, res) => {
+	const log = login(req.body.email, req.body.password);
+
+	res.status(log.status).send(log);
+});
+
 
 app.listen(5050, () => {
     console.log("Chat application is listening at http://localhost:5050");
 });
+
+
+/**
+ * Vérifie si l'adresse e-mail a un format valide
+ *
+ * @param {string} email - L'adresse e-mail à vérifier
+ * @returns {boolean} True si l'adresse e-mail est valide, sinon False
+ */
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    return emailRegex.test(email);
+}
+
+/**
+ * Vérifie si une chaîne de caractères contient des caractères malveillants
+ *
+ * @param {string} input - La chaîne de caractères à vérifier
+ * @returns {boolean} True si la chaîne de caractères est valide, sinon False
+ */
+function isValidInput(input) {
+    const inputRegex = /^[a-zA-Z0-9]+$/;
+    
+    return inputRegex.test(input);
+}
 
 
 function getAllUsers () {
@@ -189,7 +221,7 @@ function addFriend(userId, friendId) {
     );
     if (alreadyAdded) {
         return {
-            status: 500,
+            status: 400,
             message: 'Friend already added',
         };
     }
@@ -296,17 +328,111 @@ function delFriend(userId, friendId) {
 // function addMessage () {}
 // function delMessage () {}
 
-// function login () {}
-// function logout () {}
-function register (name, email, password) {
-    var users = getAllUsers();
+/**
+ * Vérifie les informations de connexion et renvoie un code de statut et un message correspondants.
+ *
+ * @param {string} email - L'adresse e-mail de l'utilisateur.
+ * @param {string} password - Le mot de passe de l'utilisateur.
+ * @returns {Object} - Un objet contenant le code de statut et le message correspondants.
+ */
+function login(email, password) {
+    // Récupère tous les utilisateurs
+    const users = getAllUsers();
 
-    // Verifier si il existe un utilisateur qui porte le meme email
+    // Vérifie si l'utilisateur existe
+    const user = users.find((user) => user.email === email);
+
+    // Si l'utilisateur n'existe pas, renvoie un code de statut 401 (Non autorisé) avec un message correspondant.
+    if (!user) {
+        return {
+			status: 401,
+			message: 'Adresse e-mail ou mot de passe incorrect'
+        };
+    }
+
+    // Vérifie si le mot de passe est correct
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    if (hashedPassword !== user.password) {
+        // Si le mot de passe est incorrect, renvoie un code de statut 401 (Non autorisé) avec un message correspondant.
+        return {
+        status: 401,
+        message: 'Adresse e-mail ou mot de passe incorrect'
+        };
+    }
+
+    // Si l'utilisateur existe et que le mot de passe est correct, renvoie un code de statut 200 (OK) avec un message correspondant.
+    return {
+        status: 200,
+        message: 'Connexion réussie'
+    };
+}
+
+
+// function logout () {}
+
+
+/**
+ * Enregistre un nouvel utilisateur
+ *
+ * @param {string} name - Le nom de l'utilisateur
+ * @param {string} email - L'adresse e-mail de l'utilisateur
+ * @param {string} password - Le mot de passe de l'utilisateur
+ * @returns {object} Un objet contenant un code de statut et un message
+ */
+function register(name, email, password) {
+    // Vérifier si l'adresse e-mail a un format valide
+    if (!isValidEmail(email)) {
+        return {
+            status: 400,
+            message: 'Invalid email address'
+        }
+    }
+  
+    // Vérifier que les entrées ne contiennent pas de caractères malveillants
+    if (!isValidInput(name)) {
+        return {
+            status: 400,
+            message: 'Invalid name input'
+        }
+    }
+    if (!isValidInput(password)) {
+        return {
+            status: 400,
+            message: 'Invalid password input'
+        }
+    }
+  
+    var users = getAllUsers();
+  
+    // Vérifier si il existe un utilisateur qui porte le meme email
     const emailExist = users.some((user) => user.email === email);
     if (emailExist) {
         return {
-            status: 500,
+            status: 409,
             message: 'Email already exists'
         }
+    }
+  
+    // Hacher le mot de passe avec bcrypt
+    const hashedPassword = bcrypt.hashSync(password, 10);
+  
+    users.push({
+        id: users.length + 1,
+        name: name,
+        email: email,
+        password: hashedPassword,
+        created_at: new Date().toUTCString(),
+    });
+  
+    fs.writeFile('users.json', JSON.stringify(users, '', '\t'), (err) => {
+        if (err) return {
+            status: 500,
+            message: err
+        }
+    });
+  
+    return {
+        status: 201,
+        message: "User registered successfully"
     }
 }
