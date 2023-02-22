@@ -69,6 +69,40 @@ searchFriend.addEventListener("change", (e) => {
 });
 
 
+const authSection = document.querySelector("#authSection");
+
+if (sessionStorage.session) {
+    const session = JSON.parse(sessionStorage.session);
+
+    authSection.innerHTML = `<li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+            ${session.name}
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li>
+                <button class="dropdown-item btn btn-text shadow-0" id="profileModal">Profile</button>
+            </li>
+            <li>
+                <button class="dropdown-item btn btn-text shadow-0" id="friendRequestsModal">Demandes d'amis</button>
+            </li>
+            <li>
+                <button class="dropdown-item btn btn-text shadow-0" id="settingsModal">Paramètres</button>
+            </li>
+            <li>
+                <button class="dropdown-item btn btn-text shadow-0" id="logoutButton">Se déconnecter</button>
+            </li>
+        </ul>
+    </li>`;
+}
+else {
+    authSection.innerHTML = `<button type="button" class="btn btn-link px-3 me-2" data-mdb-toggle="modal" data-mdb-target="#loginModal">
+        S'identifier
+    </button>
+    <button type="button" class="btn btn-link me-3" data-mdb-toggle="modal" data-mdb-target="#registerModal">
+        S'enregistrer
+    </button>`;
+}
+
 const loginForm = document.querySelector("#loginForm");
 const loginEmail = document.querySelector("#loginEmail");
 const loginPassword = document.querySelector("#loginPassword");
@@ -96,14 +130,11 @@ registerForm.addEventListener("submit", (e) => {
 });
 
 
-const authSection = document.querySelector("#authSection");
-
-
-
 const logoutButton = document.querySelector("#logoutButton");
 
-logoutButton.addEventListener("click", () => logout());
-
+if (logoutButton) {
+    logoutButton.addEventListener("click", () => logout());
+}
 
 async function getAllUsers () {
     const response = await fetch("http://localhost:5050/friends/allUsers");
@@ -133,19 +164,17 @@ async function register (name, email, password) {
     });
     const data = await response.json();
 
-    if (data.status == 201) {
-        sessionStorage.setItem("session", JSON.stringify(data.with.user));
-
-        alerts.firstElementChild.classList.add("alert-success");
-        alerts.firstElementChild.textContent = data.message;
-    }
-    else {
+    if (data.status < 200 || data.status > 299) {
         alerts.firstElementChild.classList.add("alert-danger");
         alerts.firstElementChild.textContent = data.message;
+        
+        return;
     }
-    alerts.hidden = false;
-    await sleep(5000);
-    alerts.hidden = true;
+    sessionStorage.setItem("session", JSON.stringify(data.with.user));
+
+    alerts.firstElementChild.classList.add("alert-success");
+    alerts.firstElementChild.textContent = data.message;
+    return;
 }
 
 async function login (email, password) {
@@ -161,19 +190,17 @@ async function login (email, password) {
     });
     const data = await response.json();
 
-    if (data.status == 200) {
-        sessionStorage.setItem("session", JSON.stringify(data.with.user));
-
-        alerts.firstElementChild.classList.add("alert-success");
-        alerts.firstElementChild.textContent = data.message;
-    }
-    else {
+    if (data.status < 200 || data.status > 299) {
         alerts.firstElementChild.classList.add("alert-danger");
         alerts.firstElementChild.textContent = data.message;
+        
+        return;
     }
-    alerts.hidden = false;
-    await sleep(5000);
-    alerts.hidden = true;
+    sessionStorage.setItem("session", JSON.stringify(data.with.user));
+
+    alerts.firstElementChild.classList.add("alert-success");
+    alerts.firstElementChild.textContent = data.message;
+    return;
 }
 
 function logout () {

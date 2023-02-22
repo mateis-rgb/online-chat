@@ -20,36 +20,7 @@
 					</button>
 					<div class="collapse navbar-collapse" id="navbarText">
 						<ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-						<div class="d-flex align-items-center" id="authSection">
-							<!-- Si utilisateur pas connecté -->
-							<button type="button" class="btn btn-link px-3 me-2" data-mdb-toggle="modal" data-mdb-target="#loginModal">
-							  	S'identifier
-							</button>
-							<button type="button" class="btn btn-link me-3" data-mdb-toggle="modal" data-mdb-target="#registerModal">
-							  	S'enregistrer
-							</button>
-
-							<!-- Sinon -->
-							<li class="nav-item dropdown">
-								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-								  	{{ Auth()->user->name }}
-								</a>
-								<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-									<li>
-										<button class="dropdown-item btn btn-text shadow-0">Profile</button>
-									</li>
-									<li>
-										<button class="dropdown-item btn btn-text shadow-0">Demandes d'amis</button>
-									</li>
-									<li>
-										<button class="dropdown-item btn btn-text shadow-0">Paramètres</button>
-									</li>
-									<li>
-										<button class="dropdown-item btn btn-text shadow-0" id="logoutButton">Se déconnecter</button>
-									</li>
-								</ul>
-							</li>
-						</div>
+						<div class="d-flex align-items-center" id="authSection"></div>
 					</div>
 				</div>
 			</nav>
@@ -62,37 +33,13 @@
 		
 				<div class="d-flex align-items-center justify-content-center">
 					<div class="col-md-4 m-4">
-						<div class="users card">
+						<div class="users card shadow-4">
 							<div class="card-body">
 								<h2 class="card-title">Amis</h2>
 								<hr>
 								<div class="card-text">
 									<!-- foreach {{ friend }} in {{ friends }} -->
-									<div class="list-group list-group-light" id="friendsList">
-										<div class="list-group-item list-group-item-action px-3 border-0 d-flex align-items-center">
-											<div class="p-2 flex-grow-1">
-												toto
-											</div>
-											<div class="p-2">
-												<button class="btn btn-success">
-													<i class="fa-solid fa-add"></i>
-												</button>
-												<button class="btn btn-danger">
-													<i class="fa-regular fa-circle-xmark"></i>
-												</button>
-											</div>
-										</div>
-										<div class="list-group-item list-group-item-action px-3 border-0 d-flex align-items-center">
-											<div class="p-2 flex-grow-1">
-												toto
-											</div>
-											<div class="p-2">
-												<button class="btn btn-primary">
-													<i class="fa-regular fa-message"></i>
-												</button>
-											</div>
-										</div>
-									</div>
+									<div class="list-group list-group-light" id="friendsList"></div>
 								</div>
 								<hr>
 								<form>
