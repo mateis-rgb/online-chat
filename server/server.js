@@ -4,6 +4,7 @@ const cors = require("cors");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 
@@ -19,8 +20,9 @@ app.get("/db/seed/UserTableSeeder", (req, res) => {
             id: i,
             name: `John Doe ${i}`,
             email: `john${i}@doe.fr`,
-            password: crypto.createHash("sha256").update("0000").digest("hex"),
+            password: hashedPassword = bcrypt.hashSync("0000", 10),
             created_at: new Date().toUTCString(),
+			token: uuidv4()
         });
     }
 
@@ -151,6 +153,8 @@ function getAllUsers () {
 
     return users;
 }
+
+function getUser (id) {};
 
 function getAllFriends () {
     let friends = fs.readFileSync("./friends.json", "utf8", (err) => {
@@ -343,7 +347,7 @@ function login(email, password) {
     const user = users.find((user) => user.email === email);
 
     // Si l'utilisateur n'existe pas, renvoie un code de statut 401 (Non autorisé) avec un message correspondant.
-    if (!user) {
+	if (!user) {
         return {
 			status: 401,
 			message: 'Adresse e-mail ou mot de passe incorrect'
@@ -351,8 +355,7 @@ function login(email, password) {
     }
 
     // Vérifie si le mot de passe est correct
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    if (hashedPassword !== user.password) {
+    if (!bcrypt.compareSync(password, user.password)) {
         // Si le mot de passe est incorrect, renvoie un code de statut 401 (Non autorisé) avec un message correspondant.
         return {
         status: 401,
@@ -361,9 +364,12 @@ function login(email, password) {
     }
 
     // Si l'utilisateur existe et que le mot de passe est correct, renvoie un code de statut 200 (OK) avec un message correspondant.
-    return {
+	return {
         status: 200,
-        message: 'Connexion réussie'
+        message: 'Connexion réussie',
+		with: {
+			user: user
+		}
     };
 }
 
@@ -415,14 +421,16 @@ function register(name, email, password) {
   
     // Hacher le mot de passe avec bcrypt
     const hashedPassword = bcrypt.hashSync(password, 10);
-  
-    users.push({
+	const newUser = {
         id: users.length + 1,
         name: name,
         email: email,
         password: hashedPassword,
         created_at: new Date().toUTCString(),
-    });
+		token: uuidv4()
+    }
+
+    users.push(newUser);
   
     fs.writeFile('users.json', JSON.stringify(users, '', '\t'), (err) => {
         if (err) return {
@@ -433,6 +441,9 @@ function register(name, email, password) {
   
     return {
         status: 201,
-        message: "User registered successfully"
+        message: "User registered successfully",
+		with: {
+			user: newUser
+		}
     }
 }

@@ -5,8 +5,8 @@ function sleep (ms) {
 }
 
 
-const friend_list = document.querySelector('#friends-list');
-const search_friend = document.querySelector("#search-friend");
+const friendList = document.querySelector('#friendsList');
+const searchFriend = document.querySelector("#searchFriend");
 
 const friends = [
     { name: "John Doe 3", isFriend: false },
@@ -60,12 +60,12 @@ function loadFriendListWithSearch (friendList, friendListElement, searchText) {
     });
 }
 
-loadFriendListWithSearch(friends, friend_list, search_friend.value);
+loadFriendListWithSearch(friends, friendList, searchFriend.value);
 
-search_friend.addEventListener("change", (e) => {
+searchFriend.addEventListener("change", (e) => {
     e.preventDefault();
     
-    loadFriendListWithSearch(friends, friend_list, search_friend.value);
+    loadFriendListWithSearch(friends, friendList, searchFriend.value);
 });
 
 
@@ -82,10 +82,27 @@ const registerPassword = document.querySelector("#registerPassword");
 loginForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    login (loginEmail.value, loginPassword.value);
+    if (!sessionStorage.session) {
+        login (loginEmail.value, loginPassword.value);
+    }
+});
+
+registerForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    if (!sessionStorage.session) {
+        register (registerUsername.value, registerEmail.value, registerPassword.value);
+    }
 });
 
 
+const authSection = document.querySelector("#authSection");
+
+
+
+const logoutButton = document.querySelector("#logoutButton");
+
+logoutButton.addEventListener("click", () => logout());
 
 
 async function getAllUsers () {
@@ -116,7 +133,19 @@ async function register (name, email, password) {
     });
     const data = await response.json();
 
-    return data;
+    if (data.status == 201) {
+        sessionStorage.setItem("session", JSON.stringify(data.with.user));
+
+        alerts.firstElementChild.classList.add("alert-success");
+        alerts.firstElementChild.textContent = data.message;
+    }
+    else {
+        alerts.firstElementChild.classList.add("alert-danger");
+        alerts.firstElementChild.textContent = data.message;
+    }
+    alerts.hidden = false;
+    await sleep(5000);
+    alerts.hidden = true;
 }
 
 async function login (email, password) {
@@ -132,9 +161,9 @@ async function login (email, password) {
     });
     const data = await response.json();
 
-    console.log(data);
+    if (data.status == 200) {
+        sessionStorage.setItem("session", JSON.stringify(data.with.user));
 
-    if (data.status == "200") {
         alerts.firstElementChild.classList.add("alert-success");
         alerts.firstElementChild.textContent = data.message;
     }
@@ -145,4 +174,10 @@ async function login (email, password) {
     alerts.hidden = false;
     await sleep(5000);
     alerts.hidden = true;
+}
+
+function logout () {
+    if (sessionStorage.session) {
+        sessionStorage.removeItem("session");
+    }
 }

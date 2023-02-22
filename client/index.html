@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<view name="Home"/>
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/png" href="/chat-web.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title id="title">Client - Chat</title>
 		<link rel="stylesheet" href="/style.css">
 	</head>
+
+	<view name="Home"/>
+	
 	<body>
 		<div id="app">
 			<nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -18,7 +20,7 @@
 					</button>
 					<div class="collapse navbar-collapse" id="navbarText">
 						<ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-						<div class="d-flex align-items-center">
+						<div class="d-flex align-items-center" id="authSection">
 							<!-- Si utilisateur pas connecté -->
 							<button type="button" class="btn btn-link px-3 me-2" data-mdb-toggle="modal" data-mdb-target="#loginModal">
 							  	S'identifier
@@ -34,16 +36,16 @@
 								</a>
 								<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 									<li>
-										<a class="dropdown-item" href="#">Profile</a>
+										<button class="dropdown-item btn btn-text shadow-0">Profile</button>
 									</li>
 									<li>
-										<a class="dropdown-item" href="#">Demandes d'amis</a>
+										<button class="dropdown-item btn btn-text shadow-0">Demandes d'amis</button>
 									</li>
 									<li>
-										<a class="dropdown-item" href="#">Paramètres</a>
+										<button class="dropdown-item btn btn-text shadow-0">Paramètres</button>
 									</li>
 									<li>
-										<a class="dropdown-item" href="#">Se déconnecter</a>
+										<button class="dropdown-item btn btn-text shadow-0" id="logoutButton">Se déconnecter</button>
 									</li>
 								</ul>
 							</li>
@@ -55,7 +57,7 @@
 			
 			<div class="container">
 				<div id="alerts" class="mt-4" hidden>
-					<div class="alert alert-danger"></div>
+					<div class="alert"></div>
 				</div>
 		
 				<div class="d-flex align-items-center justify-content-center">
@@ -66,7 +68,7 @@
 								<hr>
 								<div class="card-text">
 									<!-- foreach {{ friend }} in {{ friends }} -->
-									<div class="list-group list-group-light" id="friends-list">
+									<div class="list-group list-group-light" id="friendsList">
 										<div class="list-group-item list-group-item-action px-3 border-0 d-flex align-items-center">
 											<div class="p-2 flex-grow-1">
 												toto
@@ -96,8 +98,8 @@
 								<form>
 									<div class="search input-group">
 										<div class="form-outline">
-											<input type="text" id="search-friend" class="form-control">
-											<label for="search-friend" class="form-label">Rechercher un ami</label>
+											<input type="text" id="searchFriend" class="form-control">
+											<label for="searchFriend" class="form-label">Rechercher un ami</label>
 										</div>
 										<button class="btn btn-primary">
 											<i class="fa-solid fa-magnifying-glass"></i>
@@ -179,28 +181,30 @@
 					<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModal" aria-hidden="true">
 						<div class="modal-dialog">
 							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="registerModal">S'enregistrer</h5>
-									<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-								</div>
-								<div class="modal-body">
-									<div class="form-outline mt-2">
-										<input type="text" id="registerUsername" name="registerUsername" class="form-control">
-										<label for="registerUsername" class="form-label">Entrez votre nom d'utilisateur</label>
+								<form id="registerForm" method="post">
+									<div class="modal-header">
+										<h5 class="modal-title" id="registerModal">S'enregistrer</h5>
+										<button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
 									</div>
-									<div class="form-outline mt-2">
-										<input type="email" id="registerEmail" name="registerEmail" class="form-control">
-										<label for="registerEmail" class="form-label">Entrez votre email</label>
+									<div class="modal-body">
+										<div class="form-outline mt-2">
+											<input type="text" id="registerUsername" name="registerUsername" class="form-control">
+											<label for="registerUsername" class="form-label">Entrez votre nom d'utilisateur</label>
+										</div>
+										<div class="form-outline mt-2">
+											<input type="email" id="registerEmail" name="registerEmail" class="form-control">
+											<label for="registerEmail" class="form-label">Entrez votre email</label>
+										</div>
+										<div class="form-outline mt-2">
+											<input type="password" id="registerPassword" name="registerPassword" class="form-control">
+											<label for="registerPassword" class="form-label">Entrez votre mot de passe</label>
+										</div>
 									</div>
-									<div class="form-outline mt-2">
-										<input type="password" id="registerPassword" name="registerPassword" class="form-control">
-										<label for="registerPassword" class="form-label">Entrez votre mot de passe</label>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fermer</button>
+										<button type="submit" class="btn btn-primary" data-mdb-dismiss="modal">S'enregistrer</button>
 									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Fermer</button>
-									<button type="button" class="btn btn-primary" data-mdb-dismiss="modal">S'enregistrer</button>
-								</div>
+								</form>
 								
 							</div>
 						</div>
