@@ -1,5 +1,4 @@
 const express = require("express");
-const crypto = require("node:crypto");
 const cors = require("cors");
 const fs = require("fs");
 const bodyParser = require("body-parser");
@@ -47,6 +46,17 @@ app.get("/", (req, res) => {
     });
 });
 
+app.get("/user/:uid", (req, res) => {
+    const user = getUser(req.params.uid);
+
+    if (user) {
+        res.status(user.status).send(user);
+    }
+    else {
+        res.status(user.status).send(user.with);
+    }
+});
+
 app.get("/friends/allUsers", (req, res) => {
     const users = getAllUsers();
 
@@ -68,17 +78,10 @@ app.get("/friends/:uid", (req, res) => {
     const friends = getFriendListOfUser(req.params.uid);
 
     if (friends == null) {
-        res.status(500).send({
-            friendsRequest: "failed",
-            friends: friends
-        });
-        return;
+        res.status(friends.status).send(friends);
     }
 
-    res.status(200).send({
-        friendsRequest: "success",
-        friends: friends
-    });
+    res.status(friends.status).send(friends.with);
 });
 
 app.get("/friends/:uid/add/:friendUID", (req, res) => {
@@ -154,7 +157,28 @@ function getAllUsers () {
     return users;
 }
 
-function getUser (id) {};
+function getUser (id) {
+    const users = getAllUsers();
+
+    let i;
+
+    for (i = 0; i < users.length; i++) {
+        if (users[i].id == id) {
+            return {
+                status: 200,
+                message: "Requête: OK",
+                with: {
+                    user: users[i]
+                }
+            }
+        }
+    }
+
+    return {
+        status: 500,
+        message: `Aucun utilisateur ne correspond à l'id ${id}`
+    }
+}
 
 function getAllFriends () {
     let friends = fs.readFileSync("./friends.json", "utf8", (err) => {
@@ -191,7 +215,21 @@ function getFriendListOfUser (userId) {
         }
     });
 
-    return friendList;
+    if (friendList == []) {
+        return {
+            status: 500,
+            message: `Aucun ami n'est lié à cet identifiant ${id}`
+        }
+    }
+    else {
+        return {
+            status: 200,
+            message: "Requête: OK",
+            with: {
+                friendList: friendList
+            }
+        }
+    }
 }
 
 /**

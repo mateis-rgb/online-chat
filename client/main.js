@@ -4,71 +4,70 @@ function sleep (ms) {
     new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+if (sessionStorage.session) {
+	const session = JSON.parse(sessionStorage.session);
 
-const friendList = document.querySelector('#friendsList');
-const searchFriend = document.querySelector("#searchFriend");
+	const friendList = document.querySelector('#friendsList');
+	const searchFriend = document.querySelector("#searchFriend");
 
-const friends = [
-    { name: "John Doe 3", isFriend: false },
-    { name: "John Doe 0", isFriend: true },
-    { name: "John Doe 4", isFriend: false },
-    { name: "John Doe 1", isFriend: true },
-    { name: "John Doe 2", isFriend: true },
-];
+	const friends = getFriendListOfUser(session.id);
 
-/**
- * 
- * @param {Object} friendList 
- * @param {Element} friendListElement 
- * @param {String} searchText 
- */
-function loadFriendListWithSearch (friendList, friendListElement, searchText) {
-    friendListElement.innerHTML = "";
+	console.log(friends);
 
-    friendList.forEach((element) => {
-        if (element.name.includes(searchText)) {   
-            let elm = document.createElement("div");
-            
-            if (element.isFriend) {   
-                elm.classList = "list-group-item list-group-item-action px-3 border-0 d-flex align-items-center";
-                elm.innerHTML = `<div class="p-2 flex-grow-1">
-                    ${element.name}
-                </div>
-                <div class="p-2">
-                    <button class="btn btn-primary">
-                        <i class="fa-regular fa-message"></i>
-                    </button>
-                </div>`;
-            }
-            else {
-                elm.classList = "list-group-item list-group-item-action px-3 border-0 d-flex align-items-center";
-                elm.innerHTML = `<div class="p-2 flex-grow-1">
-                    ${element.name}
-                </div>
-                <div class="p-2">
-                    <button class="btn btn-success">
-                        <i class="fa-solid fa-add"></i>
-                    </button>
-                    <button class="btn btn-danger" hidden>
-                        <i class="fa-regular fa-circle-xmark"></i>
-                    </button>
-                </div>`;
-            }
-
-            friendListElement.appendChild(elm);
-        }
-    });
-}
-
-loadFriendListWithSearch(friends, friendList, searchFriend.value);
-
-searchFriend.addEventListener("change", (e) => {
-    e.preventDefault();
+	/**
+	 * 
+	 * @param {Object} friendList 
+	 * @param {Element} friendListElement 
+	 * @param {String} searchText 
+	*/
+	function loadFriendListWithSearch (friendList, friendListElement, searchText) {
+		friendListElement.innerHTML = "";
+		
+		friendList.forEach((element) => {
+			if (element.name.includes(searchText)) {   
+				let elm = document.createElement("div");
+				
+				if (element.isFriend) {   
+					elm.classList = "list-group-item list-group-item-action px-3 border-0 d-flex align-items-center";
+					elm.innerHTML = `<div class="p-2 flex-grow-1">
+						${element.name}
+					</div>
+					<div class="p-2">
+						<button class="btn btn-primary">
+							<i class="fa-regular fa-message"></i>
+						</button>
+					</div>`;
+				}
+				else {
+					elm.classList = "list-group-item list-group-item-action px-3 border-0 d-flex align-items-center";
+					elm.innerHTML = `<div class="p-2 flex-grow-1">
+						${element.name}
+					</div>
+					<div class="p-2">
+						<button class="btn btn-success">
+							<i class="fa-solid fa-add"></i>
+						</button>
+						<button class="btn btn-danger" hidden>
+							<i class="fa-regular fa-circle-xmark"></i>
+						</button>
+					</div>`;
+				}
+				
+				friendListElement.appendChild(elm);
+			}
+		});
+	}
     
     loadFriendListWithSearch(friends, friendList, searchFriend.value);
-});
-
-
+    
+    searchFriend.addEventListener("change", (e) => {
+        e.preventDefault();
+        
+        loadFriendListWithSearch(friends, friendList, searchFriend.value);
+    });
+}
+    
+    
 const authSection = document.querySelector("#authSection");
 
 if (sessionStorage.session) {

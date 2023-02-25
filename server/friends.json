@@ -8,5 +8,25 @@
 		"id": 1,
 		"userId": 3,
 		"isFriendWith": 2
+	},
+	{
+		"id": 3,
+		"userId": 0,
+		"isFriendWith": 4
+	},
+	{
+		"id": 4,
+		"userId": 4,
+		"isFriendWith": 0
+	},
+	{
+		"id": 5,
+		"userId": 0,
+		"isFriendWith": 3
+	},
+	{
+		"id": 6,
+		"userId": 3,
+		"isFriendWith": 0
 	}
 ]
